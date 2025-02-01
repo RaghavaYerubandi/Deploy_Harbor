@@ -1,59 +1,65 @@
 # Deploy_Harbor
+We will explore how to deploy a private registry to store the contaainer images using `Harbor`.
 ### About:
 Harbor is an open-source container image registry that provides security, identity management, and vulnerability scanning for container images.
+It is often used in Kubernetes env's as a private registry to store, scan and manage container images.
+Harbor adds security, compliance, and management features on top of a basic registry like `Dockerhub` etc.
+- Learn more about harbor here `https://goharbor.io/`.
 ### Key Features of Harbor: (WIP)
-Role-Based Access Control (RBAC)
-Users can be assigned roles (Admin, Developer, Guest) to restrict image access.
-Supports integration with LDAP/Active Directory.
-2️⃣ Vulnerability Scanning
-Scans images using tools like Trivy or Clair.
-Displays vulnerabilities and provides details on fixes.
-Helps in securing containerized applications before deployment.
-3️⃣ Image Signing & Security
-Supports Notary for content trust and image signing.
-Prevents running unsigned or tampered images.
-4️⃣ Replication Across Registries
-Synchronize images between Harbor and other registries (e.g., Docker Hub, AWS ECR, GCR).
-Supports multi-cloud and hybrid deployments.
-5️⃣ Web UI & API
-Web-based dashboard for managing images and projects.
-REST API for automation and integration.
-6️⃣ Helm Chart & OCI Artifact Support
-Stores and manages Helm charts and OCI artifacts.
-Useful for Kubernetes deployments.
-7️⃣ Authentication & Authorization
-Supports authentication via:
-Database (local users)
-LDAP/Active Directory
-OIDC (Keycloak, Okta, etc.)
-8️⃣ Garbage Collection & Tag Retention
-Automatically removes unused images to free up storage.
-Configurable tag retention policies to keep the latest images.
+- Vulnerability Scanning
+  - Scans images using tools like Trivy or Clair.
+  - Displays vulnerabilities and provides details on fixes.
+  - Helps in securing containerized applications before deployment.
+- Image Signing & Security
+  - Supports Notary for content trust and image signing.
+  - Prevents running unsigned or tampered images.
+- Replication Across Registries
+  - Synchronize images between Harbor and other registries (e.g., Docker Hub, AWS ECR, GCR).
+- Web UI & API
+  - Web-based dashboard for managing images and projects.
+  - REST API for automation and integration.
+- Helm Chart & OCI Artifact Support
+  - Stores and manages Helm charts and OCI artifacts.
+  - Useful for Kubernetes deployments.
+- Garbage Collection & Tag Retention
+  - Automatically removes unused images to free up storage.
+  - Configurable tag retention policies to keep the latest images.
+- Role-Based Access Control (RBAC).
+  - Users can be assigned roles to restrict image access.
+  - Supports integration with LDAP/Active Directory.
 
 ### Deploy Harbor Using `Docker_Compose`:
 
 **Prerequisites**:
-- Docker Should be installed.
-- 
+- Docker must be installed on the system.
+- Docker Compose is required for running Harbor as a standalone registry.
 
 **Download Harbour**
-- Download the latest release of the Harbor registry release.
+- Download the latest release of Harbor.
 ~~~bash
 wget https://github.com/goharbor/harbor/releases/latest/download/harbor-online-installer.tgz
 ~~~
-**Extract the file**
-- Extract the downloaded file
+**Extract the archive file**
+- Extract the downloaded archive file
 ~~~bash
 tar xvf harbor-online-installer.tgz
 ~~~
 **Install the Harbor**
+- Navigate to the Harbor directory.
 ~~~bash
 cd harbor
 ~~~
-There is a file with `harbor.yml.tmpl`, where all the setting will be there.
-- Copy the file using `cp harbor.yml.tmpl harbor.yml`.
-- Edit the `harbor.yml` to set the harbor password & dns certificates & dns name.
+**Note:** Inside the directory, you'll find a configuration file with name `harbor.yml.tmpl`. This file contains all the necessary configurations for Harbor.
+- Copy the configuration file to create the actual configuration file.
+~~~bash
+cp harbor.yml.tmpl harbor.yml
+~~~
+- Edit the `harbor.yml` and modify the following changes.
+  - Configure the DNS name for the Harbor registry.
+  - Specify SSL certificates if using HTTPS.
+  - Set the admin password for Harbor.
 
+- Below is the harbor.yml file. Update the necessary fields as per your requirement.
 ~~~bash
 # Configuration file of Harbor
 
@@ -92,19 +98,25 @@ https:
 # Remember Change the admin password from UI after launching Harbor.
 harbor_admin_password: Harbor12345
 ~~~
-**Install Harbor with `Trivy`**
+**Install Harbor with Trivy Scanner`**
 ~~~bash
 ./install.sh --with-trivy
 ~~~
-**Map your IP with DNS**
-- Map your IP with the DNS, create a A name record.
-- Access the portal with User & password provided.
+**Configure DNS**
+- Map your server’s IP address to a DNS hostname by creating an A record in your DNS settings.
+- This ensures the Harbor portal is accessible via a domain name.
+**Access Harbor**
+- Open the Harbor UI in a browser using the configured hostname.
+- Log in with the admin username and password specified in `harbor.yml`.
 **Verify the scanner**
-- ![image](https://github.com/user-attachments/assets/03948343-ed4c-442f-ac4d-4f8746a24d6b)
+- Navigate to Administration > Interrogation Services in the Harbor UI.
+- Ensure that Trivy is listed as the default scanner as shown below.
 
+![image](https://github.com/user-attachments/assets/03948343-ed4c-442f-ac4d-4f8746a24d6b)
 
-**Scane Images for Vulnerability**
-- Tag your Images & push it the registry
-- 
+**Scan Images for Vulnerabilities**
+- Tag and push your images to the registry.
+- Scan the Image to check for vulnerabilities.
+
 ![image](https://github.com/user-attachments/assets/4122615f-d21c-4f20-bc4d-adf4d53be9ec)
 
